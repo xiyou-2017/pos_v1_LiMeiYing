@@ -11,9 +11,23 @@ let counted = (inputs)=> {
       cartItem.count += count;
     }
     else {
-      let item=allItems.find((item)=>item.barcode==barcode);
-      cartItems.push({item:item,count:count});
+      let item = allItems.find((item)=>item.barcode == barcode);
+      cartItems.push({item: item, count: count});
     }
+  }
+  return cartItems;
+}
+
+let sumPrice = (cartItems)=> {
+  let discount = loadPromotions();
+  for (let cartItem of cartItems) {
+    cartItem.sum = cartItem.count * cartItem.item.price;
+    cartItem.save = 0;
+    let pro = discount.find((pro)=>pro.barcodes.includes(cartItem.item.barcode));
+    if (pro && cartItem.count >= 3) {
+      cartItem.save = Math.floor(cartItem.count / 3) * cartItem.item.price;
+    }
+    cartItem.sum -= cartItem.save;
   }
   return cartItems;
 }
